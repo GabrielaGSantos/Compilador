@@ -1,0 +1,85 @@
+﻿using Compilador.modelos;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Compilador
+{
+    class AnaliseLexica
+    {
+        String programa;
+        RichTextBox console;
+        String[] subPrograma;
+        ArrayList resposta = new ArrayList();
+
+        List<Token> tokens = new List<Token>();
+        List<Erro> erros = new List<Erro>();
+
+        Estados estados;
+
+        public AnaliseLexica(String programa, RichTextBox console)
+        {
+            this.programa = programa;
+            this.console = console;
+        }
+
+        public Tuple<List<Token>, List<Erro>> Analisar()
+        {
+            int num_linha = 0;
+            QuebrarLinha();
+
+            foreach(var linha in subPrograma)
+            {
+                AnalisarLinha(linha, num_linha++);
+            }
+            
+            return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+        }
+
+        public String[] QuebrarLinha()
+        {
+            subPrograma = programa.Split('\n');
+            return subPrograma;
+        }
+
+        public void AnalisarLinha(String linha, int numLinha)
+        {
+            int num_coluna = 0, qntd_coluna;
+            bool final_linha = false;            
+            
+            String[] palavras = linha.Split(new[] {' '}, 2);            
+            qntd_coluna = palavras[0].Length;
+            
+            while (final_linha == false)
+            {    
+                estados = new Estados(palavras[0], num_coluna, qntd_coluna, numLinha);
+                Tuple<List<Token>, List<Erro>> token_erro = estados.Estado_q0();
+                
+                foreach(var token in token_erro.Item1)
+                {
+                    tokens.Add(token);
+                }
+
+                foreach(var erro in token_erro.Item2)
+                {
+                    erros.Add(erro);
+                }
+                
+                if (palavras.Length > palavras[0].Length)
+                {
+                    linha = palavras[1];
+                    palavras = linha.Split(new char[] { ' ' }, 2);
+                    num_coluna = qntd_coluna + 1;
+                    qntd_coluna = palavras[0].Length;
+                }
+                else
+                    final_linha = true;                
+            };            
+        }
+
+    }
+}
