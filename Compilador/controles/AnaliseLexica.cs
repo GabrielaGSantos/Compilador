@@ -49,27 +49,33 @@ namespace Compilador
         public void AnalisarLinha(String linha, int numLinha)
         {
             int num_coluna = 0, qntd_coluna;
-            bool final_linha = false;            
-            
+            bool final_linha = false;
+            Tuple<List<Token>, List<Erro>> token_erro = null;
+
             String[] palavras = linha.Split(new[] {' '}, 2);            
             qntd_coluna = palavras[0].Length;
             
             while (final_linha == false)
-            {    
-                estados = new Estados(palavras[0], num_coluna, qntd_coluna, numLinha);
-                Tuple<List<Token>, List<Erro>> token_erro = estados.Estado_q0();
+            {   
+               
+                    estados = new Estados(palavras[0], num_coluna, qntd_coluna, numLinha);
+                    token_erro = estados.Estado_q0();
                 
-                foreach(var token in token_erro.Item1)
+                
+                if(token_erro != null)
                 {
-                    tokens.Add(token);
-                }
+                    foreach (var token in token_erro.Item1)
+                    {
+                        tokens.Add(token);
+                    }
 
-                foreach(var erro in token_erro.Item2)
-                {
-                    erros.Add(erro);
-                }
+                    foreach (var erro in token_erro.Item2)
+                    {
+                        erros.Add(erro);
+                    }
+                }                
                 
-                if (palavras.Length > palavras[0].Length)
+                if (palavras.Length > 1)
                 {
                     linha = palavras[1];
                     palavras = linha.Split(new char[] { ' ' }, 2);
