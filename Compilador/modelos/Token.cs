@@ -8,22 +8,22 @@ namespace Compilador.modelos
 {
     class Token
     {
-        public String tipo;
-        public String lexema;
-        public int linha;
-        public int coluna;
+        private String lexema;
+        private String tipo_token;
+        private int linha;
+        private int coluna;
 
-        public Token(String tipo, String lexema, int linha, int coluna)
-        {
-            this.tipo = tipo;
-            this.lexema = lexema;
-            this.linha = linha;
-            this.coluna = coluna;
-        }
+        public string Lexema { get => lexema; set => lexema = value; }
+        public string Tipo_token { get => tipo_token; set => tipo_token = value; }
+        public int Linha { get => linha; set => linha = value; }
+        public int Coluna { get => coluna; set => coluna = value; }
 
-        public override String ToString()
+        public Token(String lexema, String token, int linha, int coluna)
         {
-            return String.Format("| {0, -10} | {1, -20} | {2, -7} | {3, -7} | \n", tipo, lexema, linha, coluna);
-        }
+            this.Lexema = lexema;
+            this.Tipo_token = token;
+            this.Linha = linha;
+            this.Coluna = coluna;
+        }        
     }
 }

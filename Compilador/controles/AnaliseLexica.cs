@@ -34,12 +34,11 @@ namespace Compilador
 
             foreach (var linha in subPrograma)
             {
-                
                 AnalisarLinha(linha, num_linha++);
             }
-            
+
             return new Tuple<List<Token>, List<Erro>>(tokens, erros);
-        }        
+        }
 
         public void AnalisarLinha(String linha, int numLinha)
         {
@@ -47,7 +46,33 @@ namespace Compilador
             bool final_linha = false;
             Tuple<List<Token>, List<Erro>> token_erro = null;
 
-            String[] palavras = linha.Split(new[] {' '}, 2);            
+            String[] palavras = linha.Split(new[] { ' ' }, 2);
+
+            if (palavras[0].Contains('"'))
+            {
+                if(palavras.Length == 2)
+                {
+                    palavras[0] += " " + palavras[1];
+                    palavras[1] = "";
+                    palavras = palavras[0].Split(new[] { '"' }, 3);
+                }
+                else
+                {
+                    palavras = palavras[0].Split(new[] { '"' }, 3);
+                }
+                
+                if (palavras.Length == 3)
+                {
+                    palavras[0] = palavras[0] + '"' + palavras[1] + '"';
+                    palavras[1] = palavras[2];
+                }
+                else
+                {
+                    palavras[0] = palavras[0] + '"' + palavras[1];
+                    palavras = new string[] { palavras[0]};
+                }
+            }
+
             qntd_coluna = palavras[0].Length;
             
             while (final_linha == false)
@@ -67,12 +92,35 @@ namespace Compilador
                     {
                         erros.Add(erro);
                     }
-                }                
-                
+                }
+
                 if (palavras.Length > 1)
                 {
                     linha = palavras[1];
                     palavras = linha.Split(new char[] { ' ' }, 2);
+                    if (palavras[0].Contains('"'))
+                    {
+                        if (palavras.Length == 2)
+                        {
+                            palavras[0] += " " + palavras[1];
+                            palavras[1] = "";
+                            palavras = palavras[0].Split(new[] { '"' }, 3);
+                        }
+                        else
+                        {
+                            palavras = palavras[0].Split(new[] { '"' }, 3);
+                        }
+                        if (palavras.Length == 3)
+                        {
+                            palavras[0] = palavras[0] + '"' + palavras[1] + '"';
+                            palavras[1] = palavras[2];
+                        }
+                        else
+                        {
+                            palavras[0] = palavras[0] + '"' + palavras[1];
+                            palavras = new string[] { palavras[0] };
+                        }                            
+                    }
                     num_coluna = qntd_coluna + 1;
                     qntd_coluna = palavras[0].Length;
                 }
