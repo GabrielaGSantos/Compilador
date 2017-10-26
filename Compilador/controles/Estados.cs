@@ -29,12 +29,44 @@ namespace Compilador
         {           
             if (tamanho > 0)
             {
-                if (palavra[posicao] == 'P')
+                if (palavra[posicao] == ';')
+                {
+                    lexema += palavra[posicao];
+                    posicao++;
+                    tamanho--;
+                    return Estado_q15();
+                }
+
+                else if (palavra[posicao] == 'a')
+                {
+                    lexema += palavra[posicao];
+                    posicao++;
+                    tamanho--;
+                    return Estado_q50();
+                }
+
+                else if (palavra[posicao] == 'f')
+                {
+                    lexema += palavra[posicao];
+                    posicao++;
+                    tamanho--;
+                    return Estado_q46();
+                }
+
+                else if (palavra[posicao] == 'P')
                 {
                     lexema += palavra[posicao];
                     posicao++;
                     tamanho--;
                     return Estado_q1();
+                }
+
+                else if (palavra[posicao] == 'l')
+                {
+                    lexema += palavra[posicao];
+                    posicao++;
+                    tamanho--;
+                    return Estado_q37();
                 }
 
                 else if (palavra[posicao] == 'i')
@@ -45,6 +77,54 @@ namespace Compilador
                     return Estado_q9();
                 }
 
+                else if (palavra[posicao] == 'e')
+                {
+                    lexema += palavra[posicao];
+                    posicao++;
+                    tamanho--;
+                    return Estado_q31();
+                }
+
+                else if (palavra[posicao] == 'n')
+                {
+                    lexema += palavra[posicao];
+                    posicao++;
+                    tamanho--;
+                    return Estado_q26();
+                }
+
+                else if (palavra[posicao] == 's')
+                {
+                    lexema += palavra[posicao];
+                    posicao++;
+                    tamanho--;
+                    return Estado_q41();
+                }
+
+                else if (palavra[posicao] == ':')
+                {
+                    lexema += palavra[posicao];
+                    posicao++;
+                    tamanho--;
+                    return Estado_q22();
+                }
+
+                else if (palavra[posicao] == '=')
+                {
+                    lexema += palavra[posicao];
+                    posicao++;
+                    tamanho--;
+                    return Estado_q20_final();
+                }
+
+
+
+                else if(palavra[posicao] == '\t')
+                {
+                    posicao ++;
+                    tamanho --;
+                    return Estado_q0();
+                }
                 else
                 {
                     caracter = Convert.ToInt32(palavra[posicao]);
@@ -180,13 +260,23 @@ namespace Compilador
         {
             if (tamanho == 0)
             {
-                tokens.Add(new Token(lexema, "Programa", linha+1, coluna+1));
+                tokens.Add(new Token(lexema, "programa", linha+1, coluna+1));
                 erros.Add(new Erro("", "", 0, 0, 1));
                 return new Tuple<List<Token>, List<Erro>>(tokens,erros);
             }
             else
             {
-                return Estado_q54_final();                
+                if (palavra[posicao] == ';')
+                {
+                    tokens.Add(new Token(lexema, "programa", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = palavra[posicao].ToString();
+                    return Estado_q15();
+                }
+                else
+                {
+                    return Estado_q54_final();
+                }
             }
         }
 
@@ -280,46 +370,554 @@ namespace Compilador
             }
         }
 
+        private Tuple<List<Token>, List<Erro>> Estado_q15()
+        {
+            if (tamanho == 0)
+            {
+                tokens.Add(new Token(lexema, "final_linha", linha + 1, coluna + 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+            else
+            {
+                coluna = posicao;
+                lexema = null;
+                return Estado_q0();
+            }
+        }
+        private Tuple<List<Token>, List<Erro>> Estado_q20_final()
+        {
+            if (tamanho == 0)
+            {
+                tokens.Add(new Token(lexema, "atribuicao", linha + 1, coluna + 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+
+            else if (tamanho > 0 && palavra[posicao] == '=')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q21_final();
+            }
+            else
+            {
+                tokens.Add(new Token(lexema, "atribuicao", linha + 1, coluna + 1));
+                coluna = posicao;
+                lexema = null;
+                return Estado_q0();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q21_final()
+        {
+            if (tamanho == 0)
+            {
+                tokens.Add(new Token(lexema, "condicao_igual", linha + 1, coluna + 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+            else
+            {
+                tokens.Add(new Token(lexema, "condicao_igual", linha + 1, coluna + 1));
+                coluna = posicao;
+                lexema = null;
+                return Estado_q0();                
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q22()
+        {
+            if (tamanho > 0 && palavra[posicao] == '=')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q23_final();
+            }
+            else
+            {
+                erros.Add(new Erro("Erro! Caracter inesperado", palavra[posicao].ToString(), linha + 1, coluna + posicao + 1, 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q23_final()
+        {
+            if (tamanho == 0)
+            {
+                tokens.Add(new Token(lexema, "condicao_diferente", linha + 1, coluna + 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+            else
+            {
+                if (palavra[posicao] == ';')
+                {
+                    tokens.Add(new Token(lexema, "condicao_diferente", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = palavra[posicao].ToString();
+                    return Estado_q15();
+                }
+                else
+                {
+                    tokens.Add(new Token(lexema, "condicao_diferente", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = null;
+                    return Estado_q0();
+                }
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q26()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'u')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q27();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q27()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'm')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q28_final();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q28_final()
+        {
+            if (tamanho == 0)
+            {
+                tokens.Add(new Token(lexema, "tipo_variavel", linha + 1, coluna + 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+            else
+            {
+                if(palavra[posicao] == ';')
+                {
+                    tokens.Add(new Token(lexema, "tipo_variavel", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = palavra[posicao].ToString();
+                    return Estado_q15();
+                }
+                else
+                {
+                    return Estado_q54_final();
+                }                
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q31()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'x')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q32();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q32()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'i')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q33();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q33()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'b')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q34();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q34()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'i')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q35();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q35()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'r')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q36_final();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q36_final()
+        {
+            if (tamanho == 0)
+            {
+                tokens.Add(new Token(lexema, "escreva", linha + 1, coluna + 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+            else
+            {
+                if (palavra[posicao] == ';')
+                {
+                    tokens.Add(new Token(lexema, "escreva", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = palavra[posicao].ToString();
+                    return Estado_q15();
+                }
+                else
+                {
+                    return Estado_q54_final();
+                }
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q37()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'e')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q38();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q38()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'r')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q39_final();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q39_final()
+        {
+            if (tamanho == 0)
+            {
+                tokens.Add(new Token(lexema, "leia", linha + 1, coluna + 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+            else
+            {
+                if (palavra[posicao] == ';')
+                {
+                    tokens.Add(new Token(lexema, "leia", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = palavra[posicao].ToString();
+                    return Estado_q15();
+                }
+                else
+                {
+                    return Estado_q54_final();
+                }
+            }
+        }
+
         private Tuple<List<Token>, List<Erro>> Estado_q40_final()
         {
             if (tamanho == 0)
             {
                 tokens.Add(new Token(lexema, "inicio", linha + 1, coluna + 1));
-                erros.Add(new Erro("", "", 0, 0, 1));
-
                 return new Tuple<List<Token>, List<Erro>>(tokens, erros);
             }
             else
             {
-                caracter = Convert.ToInt32(palavra[posicao]);
-                if ((caracter > 64 && caracter < 91) || (caracter > 96 && caracter < 123))
+                if (palavra[posicao] == ';')
                 {
-                    lexema += palavra[posicao];
-                    posicao++;
-                    tamanho--;
-                    return Estado_q54_final();
-                }
-                else if (caracter > 47 && caracter < 58)
-                {
-                    lexema += palavra[posicao];
-                    posicao++;
-                    tamanho--;
-                    return Estado_q54_final();
+                    tokens.Add(new Token(lexema, "inicio", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = palavra[posicao].ToString();
+                    return Estado_q15();
                 }
                 else
                 {
-                    erros.Add(new Erro("Erro! Caracter inesperado", palavra[posicao].ToString(), linha + 1, coluna + posicao + 1, 1));
-                    return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+                    return Estado_q54_final();
                 }
             }
         }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q41()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'e')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q42_final();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q42_final()
+        {
+            if (tamanho == 0)
+            {
+                tokens.Add(new Token(lexema, "condicional_entrada", linha + 1, coluna + 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+
+            else if (palavra[posicao] == 'n')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q43();
+            }
+            else
+            {
+                if (palavra[posicao] == ';')
+                {
+                    tokens.Add(new Token(lexema, "condicional_entrada", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = palavra[posicao].ToString();
+                    return Estado_q15();
+                }
+                else
+                {
+                    return Estado_q54_final();
+                }
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q43()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'a')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q44();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q44()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'o')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q45_final();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q45_final()
+        {
+            if (tamanho == 0)
+            {
+                tokens.Add(new Token(lexema, "condicional_saida", linha + 1, coluna + 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+            else
+            {
+                if (palavra[posicao] == ';')
+                {
+                    tokens.Add(new Token(lexema, "condicional_saida", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = palavra[posicao].ToString();
+                    return Estado_q15();
+                }
+                else
+                {
+                    return Estado_q54_final();
+                }
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q46()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'a')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q47();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q47()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'c')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q48();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q48()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'a')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q49_final();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q49_final()
+        {
+            if (tamanho == 0)
+            {
+                tokens.Add(new Token(lexema, "repetir", linha + 1, coluna + 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+            else
+            {
+                if (palavra[posicao] == ';')
+                {
+                    tokens.Add(new Token(lexema, "repetir", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = palavra[posicao].ToString();
+                    return Estado_q15();
+                }
+                else
+                {
+                    return Estado_q54_final();
+                }
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q50()
+        {
+            if (tamanho > 0 && palavra[posicao] == 't')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q51();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q51()
+        {
+            if (tamanho > 0 && palavra[posicao] == 'e')
+            {
+                lexema += palavra[posicao];
+                posicao++;
+                tamanho--;
+                return Estado_q52_final();
+            }
+            else
+            {
+                return Estado_q54_final();
+            }
+        }
+
+        private Tuple<List<Token>, List<Erro>> Estado_q52_final()
+        {
+            if (tamanho == 0)
+            {
+                tokens.Add(new Token(lexema, "ateh", linha + 1, coluna + 1));
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
+            }
+            else
+            {
+                if (palavra[posicao] == ';')
+                {
+                    tokens.Add(new Token(lexema, "ateh", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = palavra[posicao].ToString();
+                    return Estado_q15();
+                }
+                else
+                {
+                    return Estado_q54_final();
+                }
+            }
+        }
+
         private Tuple<List<Token>, List<Erro>> Estado_q54_final()
         {
             if (tamanho == 0)
             {
                 tokens.Add(new Token(lexema, "variavel", linha + 1, coluna + 1));
-                erros.Add(new Erro("", "", 0, 0, 1));
-
                 return new Tuple<List<Token>, List<Erro>>(tokens, erros);
             }
             else
@@ -338,6 +936,15 @@ namespace Compilador
                     posicao++;
                     tamanho--;
                     return Estado_q54_final();
+                }
+                else if (palavra[posicao] == ';' || palavra[posicao] == ':' || palavra[posicao] == '=' || palavra[posicao] == '/' ||
+                    palavra[posicao] == '+' || palavra[posicao] == '-' || palavra[posicao] == '{' || palavra[posicao] == '}' || palavra[posicao] == '(' ||
+                    palavra[posicao] == '*' || palavra[posicao] == ')')
+                {
+                    tokens.Add(new Token(lexema, "variavel", linha + 1, coluna + 1));
+                    coluna = posicao;
+                    lexema = null;
+                    return Estado_q0();
                 }
                 else
                 {

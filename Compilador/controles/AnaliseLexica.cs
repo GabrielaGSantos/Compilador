@@ -30,21 +30,16 @@ namespace Compilador
         public Tuple<List<Token>, List<Erro>> Analisar()
         {
             int num_linha = 0;
-            QuebrarLinha();
+            subPrograma = programa.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
-            foreach(var linha in subPrograma)
+            foreach (var linha in subPrograma)
             {
+                
                 AnalisarLinha(linha, num_linha++);
             }
             
             return new Tuple<List<Token>, List<Erro>>(tokens, erros);
-        }
-
-        public String[] QuebrarLinha()
-        {
-            subPrograma = programa.Split('\n');
-            return subPrograma;
-        }
+        }        
 
         public void AnalisarLinha(String linha, int numLinha)
         {
@@ -58,10 +53,9 @@ namespace Compilador
             while (final_linha == false)
             {   
                
-                    estados = new Estados(palavras[0], num_coluna, qntd_coluna, numLinha);
-                    token_erro = estados.Estado_q0();
-                
-                
+                estados = new Estados(palavras[0], num_coluna, qntd_coluna, numLinha);
+                token_erro = estados.Estado_q0();
+                                
                 if(token_erro != null)
                 {
                     foreach (var token in token_erro.Item1)

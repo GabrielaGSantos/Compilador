@@ -56,8 +56,8 @@ namespace Compilador
 
             if (listar_tokens.Checked)
             {
-                caixa_console.AppendText(String.Format("| {0, -10} | {1, -17} | {2, -7} | {3, -7} | \n", "Token", "Lexama", "Linha", "Coluna"));
-                caixa_console.AppendText(String.Format("| {0, -10} | {1, -17} | {2, -7} | {3, -7} | \n", "----------", "-----------------", "-------", "-------"));
+                caixa_console.AppendText(String.Format("| {0, -10} | {1, -20} | {2, -7} | {3, -7} | \n", "Token", "Lexama", "Linha", "Coluna"));
+                caixa_console.AppendText(String.Format("| {0, -10} | {1, -20} | {2, -7} | {3, -7} | \n", "----------", "--------------------", "-------", "-------"));
                 foreach (var token in token_erro.Item1)
                 {
                     caixa_console.AppendText(token.ToString());

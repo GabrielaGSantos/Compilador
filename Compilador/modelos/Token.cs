@@ -23,7 +23,7 @@ namespace Compilador.modelos
 
         public override String ToString()
         {
-            return String.Format("| {0, -10} | {1, -17} | {2, -7} | {3, -7} | \n", tipo, lexema, linha, coluna);
+            return String.Format("| {0, -10} | {1, -20} | {2, -7} | {3, -7} | \n", tipo, lexema, linha, coluna);
         }
     }
 }
