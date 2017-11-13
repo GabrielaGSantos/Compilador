@@ -12,7 +12,6 @@ namespace Compilador
     class AnaliseLexica
     {
         String programa;
-        RichTextBox console;
         String[] subPrograma;
         ArrayList resposta = new ArrayList();
 
@@ -21,10 +20,9 @@ namespace Compilador
 
         Estados estados;
 
-        public AnaliseLexica(String programa, RichTextBox console)
+        public AnaliseLexica(String programa)
         {
             this.programa = programa;
-            this.console = console;
         }
 
         public Tuple<List<Token>, List<Erro>> Analisar()

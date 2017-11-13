@@ -48,7 +48,7 @@
             // listar_tokens
             // 
             this.listar_tokens.AutoSize = true;
-            this.listar_tokens.Location = new System.Drawing.Point(578, 39);
+            this.listar_tokens.Location = new System.Drawing.Point(430, 39);
             this.listar_tokens.Name = "listar_tokens";
             this.listar_tokens.Size = new System.Drawing.Size(90, 17);
             this.listar_tokens.TabIndex = 1;
@@ -63,7 +63,7 @@
             this.caixa_console.Location = new System.Drawing.Point(45, 107);
             this.caixa_console.Name = "caixa_console";
             this.caixa_console.ReadOnly = true;
-            this.caixa_console.Size = new System.Drawing.Size(623, 402);
+            this.caixa_console.Size = new System.Drawing.Size(762, 505);
             this.caixa_console.TabIndex = 2;
             this.caixa_console.Text = "";
             this.caixa_console.TextChanged += new System.EventHandler(this.caixa_console_TextChanged);
@@ -83,7 +83,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(709, 521);
+            this.ClientSize = new System.Drawing.Size(856, 624);
             this.Controls.Add(this.button_compilar);
             this.Controls.Add(this.caixa_console);
             this.Controls.Add(this.listar_tokens);

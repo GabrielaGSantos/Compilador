@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="controles\AnaliseLexica.cs" />
+    <Compile Include="controles\AnaliseSintatica.cs" />
     <Compile Include="controles\Estados.cs" />
     <Compile Include="modelos\Erro.cs" />
     <Compile Include="modelos\Token.cs" />

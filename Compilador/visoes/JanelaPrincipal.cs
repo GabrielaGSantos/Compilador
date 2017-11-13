@@ -1,4 +1,5 @@
-﻿using Compilador.modelos;
+﻿using Compilador.controles;
+using Compilador.modelos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -51,7 +52,8 @@ namespace Compilador
         private void button_compilar_Click(object sender, EventArgs e)
         {
             caixa_console.Clear();
-            AnaliseLexica analisadorLexico = new AnaliseLexica(programa, caixa_console);
+            bool bandeira_erro= false;
+            AnaliseLexica analisadorLexico = new AnaliseLexica(programa);
             Tuple<List<Token>, List<Erro>> token_erro = analisadorLexico.Analisar();
 
             if (listar_tokens.Checked)
@@ -63,13 +65,14 @@ namespace Compilador
                     if (token.Lexema.Length > maior)
                         maior = token.Lexema.Length;
                 }
-                caixa_console.AppendText(String.Format("| {0, -" + maior + "} | {1, -20} | {2, -7} | {3, -7} | \n", "Lexema", "Token", "Linha", "Coluna"));
-                caixa_console.AppendText(String.Format("| {0, -" + maior + "} | {1, -20} | {2, -7} | {3, -7} | \n", "---------------", "--------------------", "-------", "-------"));
+                caixa_console.AppendText(String.Format("| {0, -20} | {1, -" + maior + "} | {2, -7} | {3, -7} | \n", "Token", "Lexema", "Linha", "Coluna"));
+                caixa_console.AppendText(String.Format("| {0, -20} | {1, -" + maior + "} | {2, -7} | {3, -7} | \n", "---------------", "--------------", "-------", "-------"));
                 foreach (var token in token_erro.Item1)
                 {
-                    caixa_console.AppendText(String.Format("| {0, -" + maior + "} | {1, -20} | {2, -7} | {3, -7} | \n", token.Lexema, token.Tipo_token, token.Linha, token.Coluna));
+                    caixa_console.AppendText(String.Format("| {0, -20} | {1, -" + maior + "} | {2, -7} | {3, -7} | \n", token.Tipo_token, token.Lexema, token.Linha, token.Coluna));
                 }
                 caixa_console.AppendText("\n\n____________________________________________________\n");
+                caixa_console.AppendText("Análise Léxica Concluída!\n");
             }
             else
             {
@@ -80,12 +83,45 @@ namespace Compilador
             {
                 if(erro.tipo != "")
                     caixa_console.AppendText(erro.ToString());
+                if (erro.erro_alerta == 1)
+                    bandeira_erro = true;
             }
+            
+            if(!bandeira_erro)
+                AnalisarSintatica(token_erro.Item1);
         }
 
         private void Compilador_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void AnalisarSintatica(List<Token> lista_tokens)
+        {
+            AnaliseSintatica analise = new AnaliseSintatica(lista_tokens);
+            Tuple<Erro, List<String>, List<String>> lista_erro = analise.Analisar();
+
+            if (lista_erro.Item1 == null)
+            {
+                caixa_console.AppendText("____________________________________________________\n");
+                caixa_console.AppendText("Análise Sintática Concluída!\n");
+                caixa_console.AppendText("Sequencia de Produções: ");
+                foreach (var producao in lista_erro.Item2)
+                {
+                    caixa_console.AppendText(" "+producao);
+                }                
+            }
+            
+            else
+            {
+                caixa_console.AppendText(lista_erro.Item1.ToString());
+            }
+
+            caixa_console.AppendText("____________________________________________________\n\n");
+            foreach (var acoes in lista_erro.Item3)
+            {
+                caixa_console.AppendText(acoes);
+            }
         }
         
     }
