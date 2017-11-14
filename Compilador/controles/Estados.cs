@@ -215,13 +215,13 @@ namespace Compilador
                     }
                     else
                     {
-                        return null;
+                        return new Tuple<List<Token>, List<Erro>>(tokens, erros);
                     }
                 }
             }
             else
             {
-                return null;
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros); ;
             }
         }
 

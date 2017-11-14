@@ -103,13 +103,16 @@ namespace Compilador
 
             if (lista_erro.Item1 == null)
             {
-                caixa_console.AppendText("____________________________________________________\n");
                 caixa_console.AppendText("Análise Sintática Concluída!\n");
-                caixa_console.AppendText("Sequencia de Produções: ");
-                foreach (var producao in lista_erro.Item2)
+                if (Producoes.Checked)
                 {
-                    caixa_console.AppendText(" "+producao);
-                }                
+                    caixa_console.AppendText("Sequencia de Produções: ");
+                    foreach (var producao in lista_erro.Item2)
+                    {
+                        caixa_console.AppendText(" " + producao);
+                    }
+                }
+                           
             }
             
             else
@@ -117,11 +120,16 @@ namespace Compilador
                 caixa_console.AppendText(lista_erro.Item1.ToString());
             }
 
-            caixa_console.AppendText("____________________________________________________\n\n");
-            foreach (var acoes in lista_erro.Item3)
+            caixa_console.AppendText("\n____________________________________________________\n\n");
+
+            if (Log.Checked)
             {
-                caixa_console.AppendText(acoes);
+                foreach (var acoes in lista_erro.Item3)
+                {
+                    caixa_console.AppendText(acoes);
+                }
             }
+            
         }
         
     }

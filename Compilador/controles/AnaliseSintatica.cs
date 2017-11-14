@@ -86,7 +86,7 @@ namespace Compilador.controles
                 else if ((pilha.Peek() == "<OPERACAO>") && (tokens[0].Tipo_token == "abrir"))
                     Producao17();
 
-                else if ((pilha.Peek() == "<OPERACAO>") && (tokens[0].Tipo_token == "variavelNumerica" || tokens[0].Tipo_token == "variavel"))
+                else if ((pilha.Peek() == "<OPERACAO>") && (tokens[0].Tipo_token == "variavel_numerica" || tokens[0].Tipo_token == "variavel"))
                     Producao16();
 
                 else if ((pilha.Peek() == "<OP>") && (tokens[0].Tipo_token == "final_linha" || tokens[0].Tipo_token == "fechar"))
@@ -95,13 +95,13 @@ namespace Compilador.controles
                 else if ((pilha.Peek() == "<OP>") && (tokens[0].Tipo_token == "soma" || tokens[0].Tipo_token == "multiplicacao" || tokens[0].Tipo_token == "subtracao" || tokens[0].Tipo_token == "divisao"))
                     Producao21();
 
-                else if ((pilha.Peek() == "<VARIAVEL>") && (tokens[0].Tipo_token == "variavelNumerica"))
+                else if ((pilha.Peek() == "<VARIAVEL>") && (tokens[0].Tipo_token == "variavel_numerica"))
                     Producao19();
 
                 else if ((pilha.Peek() == "<VARIAVEL>") && (tokens[0].Tipo_token == "variavel"))
                     Producao18();
 
-                else if ((pilha.Peek() == "<CONDICAO>") && (tokens[0].Tipo_token == "variavelNumerica" || tokens[0].Tipo_token == "variavel"))
+                else if ((pilha.Peek() == "<CONDICAO>") && (tokens[0].Tipo_token == "variavel_numerica" || tokens[0].Tipo_token == "variavel"))
                     Producao28();
 
                 else if ((pilha.Peek() == "<SENAO>") && ((tokens[0].Tipo_token == "fim") || (tokens[0].Tipo_token == "escreva") || (tokens[0].Tipo_token == "leia") || (tokens[0].Tipo_token == "condicional_entrada") || (tokens[0].Tipo_token == "repetir") || (tokens[0].Tipo_token == "variavel")))
@@ -114,10 +114,10 @@ namespace Compilador.controles
                     Producao22();
 
                 else if ((pilha.Peek() == "<ARITMETICA>") && (tokens[0].Tipo_token == "multiplicacao"))
-                    Producao23();
+                    Producao24();
 
                 else if ((pilha.Peek() == "<ARITMETICA>") && (tokens[0].Tipo_token == "subtracao"))
-                    Producao24();
+                    Producao23();
 
                 else if ((pilha.Peek() == "<ARITMETICA>") && (tokens[0].Tipo_token == "divisao"))
                     Producao25();
@@ -132,13 +132,8 @@ namespace Compilador.controles
                     erros = new Erro("Erro Sintático", "Token inesperado: " + tokens[0].Lexema, tokens[0].Linha, (tokens[0].Coluna - tokens[0].Lexema.Length), 1);
             }
 
-            if (pilha.Count == 0 && tokens.Count == 0)
-                return new Tuple<Erro, List<String>, List<String>>(erros, producoes, acoes);
-
-            else {
-                erros = new Erro("Erro Sintático", "Código incompleto ", 0, 0, 1);
-                return new Tuple<Erro, List<String>, List<String>>(erros, producoes, acoes);
-            }
+            return new Tuple<Erro, List<String>, List<String>>(erros, producoes, acoes);
+                      
 
         }
 
@@ -425,7 +420,7 @@ namespace Compilador.controles
             acoes.Add("\nOPERAÇÃO 19");
             acoes.Add("\nDesempilhado: " + pilha.Peek());
             pilha.Pop();
-            pilha.Push("variavelNumerica");
+            pilha.Push("variavel_numerica");
             acoes.Add("\nEmpilhado: " + pilha.Peek());
             producoes.Add("19");
             Analisar();

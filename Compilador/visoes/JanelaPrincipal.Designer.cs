@@ -33,6 +33,8 @@
             this.caixa_console = new System.Windows.Forms.RichTextBox();
             this.button_compilar = new System.Windows.Forms.Button();
             this.abrir_arquivo = new System.Windows.Forms.OpenFileDialog();
+            this.Log = new System.Windows.Forms.CheckBox();
+            this.Producoes = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // button_arquivo
@@ -48,7 +50,7 @@
             // listar_tokens
             // 
             this.listar_tokens.AutoSize = true;
-            this.listar_tokens.Location = new System.Drawing.Point(430, 39);
+            this.listar_tokens.Location = new System.Drawing.Point(619, 48);
             this.listar_tokens.Name = "listar_tokens";
             this.listar_tokens.Size = new System.Drawing.Size(90, 17);
             this.listar_tokens.TabIndex = 1;
@@ -63,7 +65,7 @@
             this.caixa_console.Location = new System.Drawing.Point(45, 107);
             this.caixa_console.Name = "caixa_console";
             this.caixa_console.ReadOnly = true;
-            this.caixa_console.Size = new System.Drawing.Size(762, 505);
+            this.caixa_console.Size = new System.Drawing.Size(873, 505);
             this.caixa_console.TabIndex = 2;
             this.caixa_console.Text = "";
             this.caixa_console.TextChanged += new System.EventHandler(this.caixa_console_TextChanged);
@@ -79,11 +81,33 @@
             this.button_compilar.UseVisualStyleBackColor = true;
             this.button_compilar.Click += new System.EventHandler(this.button_compilar_Click);
             // 
+            // Log
+            // 
+            this.Log.AutoSize = true;
+            this.Log.Location = new System.Drawing.Point(835, 48);
+            this.Log.Name = "Log";
+            this.Log.Size = new System.Drawing.Size(44, 17);
+            this.Log.TabIndex = 4;
+            this.Log.Text = "Log";
+            this.Log.UseVisualStyleBackColor = true;
+            // 
+            // Producoes
+            // 
+            this.Producoes.AutoSize = true;
+            this.Producoes.Location = new System.Drawing.Point(732, 48);
+            this.Producoes.Name = "Producoes";
+            this.Producoes.Size = new System.Drawing.Size(77, 17);
+            this.Producoes.TabIndex = 5;
+            this.Producoes.Text = "Produções";
+            this.Producoes.UseVisualStyleBackColor = true;
+            // 
             // Compilador
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(856, 624);
+            this.ClientSize = new System.Drawing.Size(968, 624);
+            this.Controls.Add(this.Producoes);
+            this.Controls.Add(this.Log);
             this.Controls.Add(this.button_compilar);
             this.Controls.Add(this.caixa_console);
             this.Controls.Add(this.listar_tokens);
@@ -103,6 +127,8 @@
         private System.Windows.Forms.RichTextBox caixa_console;
         private System.Windows.Forms.Button button_compilar;
         private System.Windows.Forms.OpenFileDialog abrir_arquivo;
+        private System.Windows.Forms.CheckBox Log;
+        private System.Windows.Forms.CheckBox Producoes;
     }
 }
 
