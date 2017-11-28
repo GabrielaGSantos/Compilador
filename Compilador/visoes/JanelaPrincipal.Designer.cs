@@ -108,9 +108,9 @@
             this.logSemantico.AutoSize = true;
             this.logSemantico.Location = new System.Drawing.Point(838, 39);
             this.logSemantico.Name = "logSemantico";
-            this.logSemantico.Size = new System.Drawing.Size(93, 17);
+            this.logSemantico.Size = new System.Drawing.Size(97, 17);
             this.logSemantico.TabIndex = 6;
-            this.logSemantico.Text = "log Semântico";
+            this.logSemantico.Text = "Log Semântico";
             this.logSemantico.UseVisualStyleBackColor = true;
             this.logSemantico.CheckedChanged += new System.EventHandler(this.logSemantico_CheckedChanged);
             // 

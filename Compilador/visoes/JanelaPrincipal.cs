@@ -56,7 +56,7 @@ namespace Compilador
             bool bandeira_erro= false;
             AnaliseLexica analisadorLexico = new AnaliseLexica(programa);
             Tuple<List<Token>, List<Erro>> token_erro = analisadorLexico.Analisar();
-            this.lista_de_tokens = token_erro.Item1;
+            this.lista_de_tokens = new List<Token>(token_erro.Item1);
 
             if (listar_tokens.Checked)
             {
@@ -89,7 +89,7 @@ namespace Compilador
                     bandeira_erro = true;
             }
             
-            if(!bandeira_erro)
+            if (!bandeira_erro)
                 AnalisarSintatica(token_erro.Item1);
         }
 
@@ -115,15 +115,13 @@ namespace Compilador
                         caixa_console.AppendText(" " + producao);
                     }
                 }                           
-            }
-            
+            }            
             else
             {
                 caixa_console.AppendText(lista_erro.Item1.ToString());
                 bandeira_erro = true;
             }
-
-            caixa_console.AppendText("\n____________________________________________________\n\n");
+            caixa_console.AppendText("\n____________________________________________________\n");
 
             if (Log.Checked)
             {
@@ -132,34 +130,39 @@ namespace Compilador
                     caixa_console.AppendText(acoes);
                 }
             }
+
             if (!bandeira_erro)
                 AnalisarSemantica();
         }
 
         private void AnalisarSemantica()
         {
-            AnaliseSemantica analise = new AnaliseSemantica(this.lista_de_tokens);
-            Tuple<Erro, List<String>> tokens_erros = analise.Analisar();
+            AnaliseSemantica analise = new AnaliseSemantica(lista_de_tokens);
+            Tuple<List<Erro>, List<String>> tokens_erros = analise.Analisar();
 
-            if (tokens_erros.Item1 == null)
+            if (tokens_erros.Item1.Count == 0)
             {
-                caixa_console.AppendText("Análise Semântica Concluída!\n");
-                if (logSemantico.Checked && tokens_erros.Item2 != null)
-                {
-                    caixa_console.AppendText("Sequencia de Produções: ");
-                    foreach (var producao in tokens_erros.Item2)
-                    {
-                        caixa_console.AppendText("\n" + producao);
-                    }
-                }
+                caixa_console.AppendText("Análise Semântica Concluída!\n");                
             }
 
             else
             {
-                caixa_console.AppendText(tokens_erros.Item1.ToString());
+                foreach(var erro in tokens_erros.Item1)
+                {
+                    caixa_console.AppendText(erro.ToString());
+                }
             }
 
             caixa_console.AppendText("\n____________________________________________________\n\n");
+
+            if (logSemantico.Checked && tokens_erros.Item2 != null)
+            {
+                caixa_console.AppendText("\nSequencia de Produções: ");
+                foreach (var producao in tokens_erros.Item2)
+                {
+                    caixa_console.AppendText("\n" + producao);
+                }
+            }
         }
 
         private void Log_CheckedChanged(object sender, EventArgs e)
