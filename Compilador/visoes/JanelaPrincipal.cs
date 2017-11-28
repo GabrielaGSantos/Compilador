@@ -15,6 +15,7 @@ namespace Compilador
     public partial class Compilador : Form
     {
         String programa;
+        List<Token> lista_de_tokens = null;
         public Compilador()
         {
             InitializeComponent();            
@@ -55,6 +56,7 @@ namespace Compilador
             bool bandeira_erro= false;
             AnaliseLexica analisadorLexico = new AnaliseLexica(programa);
             Tuple<List<Token>, List<Erro>> token_erro = analisadorLexico.Analisar();
+            this.lista_de_tokens = token_erro.Item1;
 
             if (listar_tokens.Checked)
             {
@@ -66,7 +68,7 @@ namespace Compilador
                         maior = token.Lexema.Length;
                 }
                 caixa_console.AppendText(String.Format("| {0, -20} | {1, -" + maior + "} | {2, -7} | {3, -7} | \n", "Token", "Lexema", "Linha", "Coluna"));
-                caixa_console.AppendText(String.Format("| {0, -20} | {1, -" + maior + "} | {2, -7} | {3, -7} | \n", "---------------", "--------------", "-------", "-------"));
+                caixa_console.AppendText(String.Format("| {0, -20} | {1, -" + maior + "} | {2, -7} | {3, -7} | \n", "---------------", "----------", "-------", "-------"));
                 foreach (var token in token_erro.Item1)
                 {
                     caixa_console.AppendText(String.Format("| {0, -20} | {1, -" + maior + "} | {2, -7} | {3, -7} | \n", token.Tipo_token, token.Lexema, token.Linha, token.Coluna));
@@ -98,6 +100,7 @@ namespace Compilador
 
         private void AnalisarSintatica(List<Token> lista_tokens)
         {
+            bool bandeira_erro = false;
             AnaliseSintatica analise = new AnaliseSintatica(lista_tokens);
             Tuple<Erro, List<String>, List<String>> lista_erro = analise.Analisar();
 
@@ -111,13 +114,13 @@ namespace Compilador
                     {
                         caixa_console.AppendText(" " + producao);
                     }
-                }
-                           
+                }                           
             }
             
             else
             {
                 caixa_console.AppendText(lista_erro.Item1.ToString());
+                bandeira_erro = true;
             }
 
             caixa_console.AppendText("\n____________________________________________________\n\n");
@@ -129,8 +132,44 @@ namespace Compilador
                     caixa_console.AppendText(acoes);
                 }
             }
-            
+            if (!bandeira_erro)
+                AnalisarSemantica();
         }
-        
+
+        private void AnalisarSemantica()
+        {
+            AnaliseSemantica analise = new AnaliseSemantica(this.lista_de_tokens);
+            Tuple<Erro, List<String>> tokens_erros = analise.Analisar();
+
+            if (tokens_erros.Item1 == null)
+            {
+                caixa_console.AppendText("Análise Semântica Concluída!\n");
+                if (logSemantico.Checked && tokens_erros.Item2 != null)
+                {
+                    caixa_console.AppendText("Sequencia de Produções: ");
+                    foreach (var producao in tokens_erros.Item2)
+                    {
+                        caixa_console.AppendText("\n" + producao);
+                    }
+                }
+            }
+
+            else
+            {
+                caixa_console.AppendText(tokens_erros.Item1.ToString());
+            }
+
+            caixa_console.AppendText("\n____________________________________________________\n\n");
+        }
+
+        private void Log_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void logSemantico_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

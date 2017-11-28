@@ -35,6 +35,7 @@
             this.abrir_arquivo = new System.Windows.Forms.OpenFileDialog();
             this.Log = new System.Windows.Forms.CheckBox();
             this.Producoes = new System.Windows.Forms.CheckBox();
+            this.logSemantico = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // button_arquivo
@@ -50,7 +51,7 @@
             // listar_tokens
             // 
             this.listar_tokens.AutoSize = true;
-            this.listar_tokens.Location = new System.Drawing.Point(619, 48);
+            this.listar_tokens.Location = new System.Drawing.Point(488, 39);
             this.listar_tokens.Name = "listar_tokens";
             this.listar_tokens.Size = new System.Drawing.Size(90, 17);
             this.listar_tokens.TabIndex = 1;
@@ -84,28 +85,41 @@
             // Log
             // 
             this.Log.AutoSize = true;
-            this.Log.Location = new System.Drawing.Point(835, 48);
+            this.Log.Location = new System.Drawing.Point(725, 39);
             this.Log.Name = "Log";
-            this.Log.Size = new System.Drawing.Size(44, 17);
+            this.Log.Size = new System.Drawing.Size(88, 17);
             this.Log.TabIndex = 4;
-            this.Log.Text = "Log";
+            this.Log.Text = "Log Sintático";
             this.Log.UseVisualStyleBackColor = true;
+            this.Log.CheckedChanged += new System.EventHandler(this.Log_CheckedChanged);
             // 
             // Producoes
             // 
             this.Producoes.AutoSize = true;
-            this.Producoes.Location = new System.Drawing.Point(732, 48);
+            this.Producoes.Location = new System.Drawing.Point(615, 39);
             this.Producoes.Name = "Producoes";
             this.Producoes.Size = new System.Drawing.Size(77, 17);
             this.Producoes.TabIndex = 5;
             this.Producoes.Text = "Produções";
             this.Producoes.UseVisualStyleBackColor = true;
             // 
+            // logSemantico
+            // 
+            this.logSemantico.AutoSize = true;
+            this.logSemantico.Location = new System.Drawing.Point(838, 39);
+            this.logSemantico.Name = "logSemantico";
+            this.logSemantico.Size = new System.Drawing.Size(93, 17);
+            this.logSemantico.TabIndex = 6;
+            this.logSemantico.Text = "log Semântico";
+            this.logSemantico.UseVisualStyleBackColor = true;
+            this.logSemantico.CheckedChanged += new System.EventHandler(this.logSemantico_CheckedChanged);
+            // 
             // Compilador
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(968, 624);
+            this.Controls.Add(this.logSemantico);
             this.Controls.Add(this.Producoes);
             this.Controls.Add(this.Log);
             this.Controls.Add(this.button_compilar);
@@ -129,6 +143,7 @@
         private System.Windows.Forms.OpenFileDialog abrir_arquivo;
         private System.Windows.Forms.CheckBox Log;
         private System.Windows.Forms.CheckBox Producoes;
+        private System.Windows.Forms.CheckBox logSemantico;
     }
 }
 

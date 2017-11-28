@@ -221,7 +221,7 @@ namespace Compilador
             }
             else
             {
-                return new Tuple<List<Token>, List<Erro>>(tokens, erros); ;
+                return new Tuple<List<Token>, List<Erro>>(tokens, erros);
             }
         }
 
