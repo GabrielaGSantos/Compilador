@@ -23,17 +23,17 @@ namespace Compilador.controles
 
         public Tuple<List<String>, List<String>, List<String>> GerarCodigo()
         {
-            for (int i = 0; i<tokens.Count; i++)
+            for (int i = 0; i < tokens.Count; i++)
             {
-                if (i+1 > tokens.Count && tokens[i+1].Tipo_token == "atribuicao")
+                if (tokens[i].Tipo_token == "atribuicao")
                 {
-                    String variavel = tokens[i].Lexema;
-                    i = i + 2;
-                    if(tokens[i + 3].Tipo_token != "final_linha")
+                    String variavel = tokens[i - 1].Lexema;
+                    i = i + 1;
+                    if (tokens[i + 3].Tipo_token != "final_linha")
                     {
                         List<Token> expressao = new List<Token>();
                         int j = i;
-                        while (tokens[j + 1].Tipo_token != "final_linha")
+                        while (tokens[j].Tipo_token != "final_linha")
                         {
                             expressao.Add(tokens[j]);
                             j++;
@@ -41,7 +41,7 @@ namespace Compilador.controles
                         }
                         AnalisarExpressao(expressao);
                         i++;
-                    }                   
+                    }
                 }
                 else
                 {
@@ -55,7 +55,7 @@ namespace Compilador.controles
                         codigo.Add(tokens[i].Lexema + " ");
                 }
             }
-            return new Tuple<List<String>, List<String>, List<String>> (acoes, lista_variaveis, codigo);
+            return new Tuple<List<String>, List<String>, List<String>>(acoes, lista_variaveis, codigo);
         }
 
         public void AnalisarExpressao(List<Token> expressao)
@@ -63,7 +63,7 @@ namespace Compilador.controles
             List<Token> posfixa = new List<Token>();
             Stack<Token> pilha = new Stack<Token>();
 
-            foreach(var posicao in expressao)
+            foreach (var posicao in expressao)
             {
                 if (posicao.Tipo_token == "variavel" || posicao.Tipo_token == "variavel_numerica")
                     posfixa.Add(posicao);
@@ -73,19 +73,21 @@ namespace Compilador.controles
 
                 else if (posicao.Tipo_token == "fechar")
                 {
-                    while (pilha.Count != 0 || pilha.Peek().Tipo_token != "abrir")
+                    do
                         posfixa.Add(pilha.Pop());
+                    while (pilha.Peek().Tipo_token != "abrir");
+                        
                 }
 
                 else if (posicao.Tipo_token == "soma" || posicao.Tipo_token == "subtracao" || posicao.Tipo_token == "multiplicacao" || posicao.Tipo_token == "divisao")
                 {
-                    if(posfixa.Count == 0)
+                    if (pilha.Count == 0)
                         pilha.Push(posicao);
                     else
-                    {                      
-                        if(posicao.Tipo_token == "soma" || posicao.Tipo_token == "subtracao")
+                    {
+                        if (posicao.Tipo_token == "soma" || posicao.Tipo_token == "subtracao")
                         {
-                            while(pilha.Peek().Tipo_token == "soma" || pilha.Peek().Tipo_token == "subtracao" || pilha.Peek().Tipo_token == "multiplicacao" || pilha.Peek().Tipo_token == "divisao")
+                            while (pilha.Peek().Tipo_token == "soma" || pilha.Peek().Tipo_token == "subtracao" || pilha.Peek().Tipo_token == "multiplicacao" || pilha.Peek().Tipo_token == "divisao")
                                 posfixa.Add(pilha.Pop());
                             pilha.Push(posicao);
                         }
@@ -98,6 +100,15 @@ namespace Compilador.controles
                         }
                     }
                 }
+                else
+                {
+                    posfixa.Add(posicao);
+                }
+            }
+            String final = null;
+            foreach (var teste in posfixa)
+            {
+                final = final + teste.Lexema.ToString();
             }
         }
 
