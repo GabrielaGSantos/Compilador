@@ -138,7 +138,7 @@ namespace Compilador
         private void AnalisarSemantica()
         {
             AnaliseSemantica analise = new AnaliseSemantica(lista_de_tokens);
-            Tuple<List<Erro>, List<String>> tokens_erros = analise.Analisar();
+            Tuple<List<Erro>, List<String>, List<String>> tokens_erros = analise.Analisar();
 
             if (tokens_erros.Item1.Count == 0)
             {
@@ -162,6 +162,22 @@ namespace Compilador
                 {
                     caixa_console.AppendText("\n" + producao);
                 }
+            }
+
+            if (tokens_erros.Item1.Count == 0)
+            {
+                CodigoIntermediario(tokens_erros.Item3);
+            }
+        }
+
+        private void CodigoIntermediario(List<String> lista_variaveis)
+        {
+            Intermediario codigo_intermediario = new Intermediario(lista_de_tokens, lista_variaveis);
+            Tuple<List<String>, List<String>, List<String>> tokens_erros = codigo_intermediario.GerarCodigo();
+
+            foreach (var codigo in tokens_erros.Item3)
+            {
+                caixa_console.AppendText(codigo);
             }
         }
 

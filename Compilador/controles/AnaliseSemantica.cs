@@ -21,7 +21,7 @@ namespace Compilador.controles
             this.tokens = lista_tokens;
         }
 
-        public Tuple<List<Erro>, List<String>> Analisar()
+        public Tuple<List<Erro>, List<String>, List<String>> Analisar()
         {
             int i = 0;
             foreach (var token in tokens)
@@ -87,7 +87,7 @@ namespace Compilador.controles
                 i++;
             }
 
-            return new Tuple<List<Erro>, List<String>>(erros, acoes);
+            return new Tuple<List<Erro>, List<String>, List<String>>(erros, acoes, lista_variaveis);
         }
 
         public void DeclararVariavel(Token token)
