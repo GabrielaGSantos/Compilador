@@ -12,11 +12,13 @@ namespace Compilador.controles
     {
         List<Token> tokens = new List<Token>();
         List<String> lista_variaveis = new List<String>();
+        List<String> lista_mensagens = new List<String>();
         List<String> acoes = new List<String>();
         List<Token> codigo = new List<Token>();
-        List<Token> expressao_final = new List<Token>();
+        
         Token variavel_atual;
         int contador_variaveis = 0;
+        int contador_mensagens = 0;
 
         public Intermediario(List<Token> lista_tokens, List<String> lista_variaveis)
         {
@@ -24,27 +26,34 @@ namespace Compilador.controles
             this.lista_variaveis = lista_variaveis;
         }
 
-        public Tuple<List<String>, List<String>, List<Token>> GerarCodigo()
+        public Tuple<List<String>, List<String>, List<String>, List<Token>> GerarCodigo()
         {
             for (int i = 0; i < tokens.Count; i++)
             {
                 if (tokens[i].Tipo_token == "atribuicao")
-                {
-                    variavel_atual = tokens[i - 1];
-                    i = i + 1;
-                    if (tokens[i + 3].Tipo_token != "final_linha")
+                {                                        
+                    if(tokens[i + 2].Tipo_token != "final_linha")
                     {
-                        List<Token> expressao = new List<Token>();
-                        int j = i;
-                        while (tokens[j].Tipo_token != "final_linha")
+                        codigo.Add(tokens[i]);
+                        if (tokens[i + 4].Tipo_token != "final_linha")
                         {
-                            expressao.Add(tokens[j]);
-                            j++;
+                            variavel_atual = tokens[i - 1];
+                            codigo.RemoveAt(codigo.Count() - 1);
+                            codigo.RemoveAt(codigo.Count() - 1);
                             i++;
-                        }
-                        AnalisarExpressao(expressao);
-                        i++;
+                            List<Token> expressao = new List<Token>();
+                            int j = i;
+                            while (tokens[j].Tipo_token != "final_linha")
+                            {
+                                expressao.Add(tokens[j]);
+                                j++;
+                                i++;
+                            }
+                            AnalisarExpressao(expressao);
+                        }                        
                     }
+                    else
+                        codigo.Add(tokens[i]);
                 }
                 else
                 {
@@ -52,18 +61,30 @@ namespace Compilador.controles
                         i++;
                     else if (tokens[i].Tipo_token == "tipo_variavel")
                         i = i + 2;
-                    else if (tokens[i].Tipo_token == "final_linha" || tokens[i].Tipo_token == "abrir_chave" || tokens[i].Tipo_token == "fim" || tokens[i].Tipo_token == "inicio")
+                   /* else if (tokens[i].Tipo_token == "escreva")
+                    {
                         codigo.Add(tokens[i]);
+                        if(tokens[i+2].Tipo_token == "texto")
+                        {
+                            i = i + 2;
+                            lista_mensagens.Add("msg" + (++contador_mensagens) + ": .asciz " + tokens[i].Lexema);
+                            lista_mensagens.Add("len" + (contador_mensagens) + "= .-msg" + contador_mensagens);
+                            codigo.Add(new Token("msg" + (contador_mensagens), "texto", 0, 0));
+                            i++;
+                        }
+                    }*/
                     else
                         codigo.Add(tokens[i]);
                 }
             }
-            return new Tuple<List<String>, List<String>, List<Token>>(acoes, lista_variaveis, codigo);
+
+            return new Tuple<List<String>, List<String>, List<String>, List<Token>>(acoes, lista_variaveis, lista_mensagens, codigo);
         }
 
         public void AnalisarExpressao(List<Token> expressao)
         {
             Stack<Token> pilha_temporaria = new Stack<Token>();
+            List<Token> expressao_final = new List<Token>();
 
             foreach (var posicao in expressao)
             {
@@ -104,18 +125,18 @@ namespace Compilador.controles
                     expressao_final.Add(posicao);
                 }
             }
-
-            String final = null;
-            foreach (var teste in expressao_final)
-            {
-                final = final + teste.Lexema.ToString() + " ";
-            }
-
+            
             while (pilha_temporaria.Count > 0)
             {
-                final += pilha_temporaria.Pop().Lexema.ToString() + " ";
+                expressao_final.Add(pilha_temporaria.Pop());
             }
-            acoes.Add("Convertida expressão: " + expressao.ToString() + "em expressão posfixa: " + final);
+            acoes.Add("Convertida expressão: " + expressao.ToString() + "em expressão posfixa: " + expressao_final.ToString());
+
+            String erro = null;
+            foreach (var teste in expressao_final)
+            {
+                erro = erro + teste.Lexema + " ";
+            }
 
             ConverterExpressao(expressao_final);
         }
@@ -136,7 +157,7 @@ namespace Compilador.controles
                     Token operador = token_atual;
                     expressao_posfixa.RemoveAt(0);
 
-                    operacao_temporaria.Add(new Token("_x" + contador_variaveis++, "variavel", 0, 0));
+                    operacao_temporaria.Add(new Token("_x" + (++contador_variaveis), "variavel", 0, 0));
                     operacao_temporaria.Add(new Token("=", "atribuicao", 0, 0));
 
                     lista_variaveis.Add("_x" + contador_variaveis);
