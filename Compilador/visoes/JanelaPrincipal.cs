@@ -173,11 +173,14 @@ namespace Compilador
         private void CodigoIntermediario(List<String> lista_variaveis)
         {
             Intermediario codigo_intermediario = new Intermediario(lista_de_tokens, lista_variaveis);
-            Tuple<List<String>, List<String>, List<String>> tokens_erros = codigo_intermediario.GerarCodigo();
+            Tuple<List<String>, List<String>, List<Token>> tokens_erros = codigo_intermediario.GerarCodigo();
 
             foreach (var codigo in tokens_erros.Item3)
             {
-                caixa_console.AppendText(codigo);
+                if (codigo.Tipo_token == "final_linha")
+                    caixa_console.AppendText("\n");
+                else
+                    caixa_console.AppendText(codigo.Lexema+" ");
             }
         }
 
