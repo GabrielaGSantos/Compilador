@@ -178,7 +178,7 @@ namespace Compilador
             foreach (var codigo in tokens_erros.Item4)
             {
                 if (codigo.Tipo_token == "final_linha" || codigo.Tipo_token == "inicio" || codigo.Tipo_token == "fim" || codigo.Tipo_token == "abrir_chave")
-                    caixa_console.AppendText(codigo.Lexema + "\n\t");
+                    caixa_console.AppendText(codigo.Lexema + "\n");
                 else
                     caixa_console.AppendText(codigo.Lexema+" ");
             }

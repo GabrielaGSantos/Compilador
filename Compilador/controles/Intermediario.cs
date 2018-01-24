@@ -19,7 +19,6 @@ namespace Compilador.controles
 
         Token variavel_atual;
         int contador_variaveis = 0;
-        int contador_mensagens = 0;
 
         public Intermediario(List<Token> lista_tokens, List<String> lista_variaveis)
         {
@@ -200,7 +199,8 @@ namespace Compilador.controles
         {
             Stack<int> pilha_temporaria_faca = new Stack<int>();
             Stack<int> pilha_temporaria_se = new Stack<int>();
-            Stack<int> pilha_temporaria_senao = new Stack<int>();
+            Stack<int> pilha_bandeira = new Stack<int>();
+            Stack<String> pilha_temporaria = new Stack<String>();
             int contador_se = 0;
             int contador_faca = 0;
 
@@ -208,7 +208,7 @@ namespace Compilador.controles
             {
                 if (codigo[i].Tipo_token == "repetir")
                 {
-                    codigo_intermediario_final.Add(new Token(".faca" + (++contador_faca) + "\n", "repetir", 0, 0));
+                    codigo_intermediario_final.Add(new Token(".faca_" + (++contador_faca) + "\n", "repetir", 0, 0));
                     pilha_temporaria_faca.Push(contador_faca);
                     i++;
                 }
@@ -218,15 +218,15 @@ namespace Compilador.controles
                     int contador_temp = pilha_temporaria_faca.Pop();
                     if (codigo[i + 3].Tipo_token == "condicao_igual")
                     {
-                        codigo_intermediario_final.Add(new Token("CMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_igual", 0, 0));
-                        codigo_intermediario_final.Add(new Token("JNE " + ".faca" + contador_temp + "\n", "jump", 0, 0));
-                        codigo_intermediario_final.Add(new Token(".fim_faca" + contador_temp + "\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\nCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_igual", 0, 0));
+                        codigo_intermediario_final.Add(new Token("JNE " + ".faca_" + contador_temp + "\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token(".fim_faca_" + contador_temp + "\n\n", "jump", 0, 0));
                     }
                     else
                     {
-                        codigo_intermediario_final.Add(new Token("CMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_diferente", 0, 0));
-                        codigo_intermediario_final.Add(new Token("JEQ " + ".faca" + contador_temp + "\n", "jump", 0, 0));
-                        codigo_intermediario_final.Add(new Token(".ate" + contador_temp + "\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\nCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_diferente", 0, 0));
+                        codigo_intermediario_final.Add(new Token("JEQ " + ".faca_" + contador_temp + "\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token(".ate_" + contador_temp + "\n", "jump", 0, 0));
                     }
                     i = i + 6;
                 }
@@ -234,35 +234,44 @@ namespace Compilador.controles
                 {
                     if (codigo[i + 3].Tipo_token == "condicao_igual")
                     {
-                        codigo_intermediario_final.Add(new Token("CMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_igual", 0, 0));
-                        codigo_intermediario_final.Add(new Token("JNE " + ".senao" + (++contador_se) + "\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\nCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_igual", 0, 0));
+                        codigo_intermediario_final.Add(new Token("JNE " + ".senao_" + (++contador_se) + "\n", "jump", 0, 0));
                     }
                     else
                     {
-                        codigo_intermediario_final.Add(new Token("CMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_diferente", 0, 0));
-                        codigo_intermediario_final.Add(new Token("JQE " + ".senao" + (++contador_se) + "\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\nCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_diferente", 0, 0));
+                        codigo_intermediario_final.Add(new Token("JQE " + ".senao_" + (++contador_se) + "\n", "jump", 0, 0));
                     }
-                    codigo_intermediario_final.Add(new Token(".se" + contador_se + "\n", "condicional_entrada", 0, 0));
+                    codigo_intermediario_final.Add(new Token("\n.se_" + contador_se + "\n", "condicional_entrada", 0, 0));
                     pilha_temporaria_se.Push(contador_se);
-                    pilha_temporaria_senao.Push(contador_se);
                     i = i + 6;
                 }
                 else if (codigo[i].Tipo_token == "condicional_saida")
-                {
-                    codigo_intermediario_final.RemoveAt(codigo_intermediario_final.Count() - 1);
-                    codigo_intermediario_final.Add(new Token("\nJMP .fim_senao" + contador_se + "\n", "jump", 0, 0));                    
+                {                                       
                     int contador_temp = pilha_temporaria_se.Pop();
-                    
-                    codigo_intermediario_final.Add(new Token("\n.senao"+contador_temp + "\n", "jump", 0, 0));
+                    pilha_temporaria.Push(".fim_senao_" + contador_temp);
+                    codigo_intermediario_final.Add(new Token("\n.senao_"+contador_temp + "\n", "condicional_saida", 0, 0));
                     i++;
                 }
                 else if (codigo[i].Tipo_token == "fim")
                 {
-                    if (pilha_temporaria_senao.Count > 0)
+                    if(codigo.Count() > i+1)
                     {
-                        int contador_temp = pilha_temporaria_senao.Pop();
-                        codigo_intermediario_final.Add(new Token("\n.fim_senao" + contador_temp + "\n", "jump", 0, 0));
+                        if (codigo[i + 1].Tipo_token == "condicional_saida")
+                        {
+                            codigo_intermediario_final.Add(new Token(".fim_se_" + contador_se, "fim condicional_entrada", 0, 0));
+                            codigo_intermediario_final.Add(new Token("\nJMP .fim_senao_" + contador_se + "\n", "jump", 0, 0));
+                        }
+                        else if (pilha_temporaria.Count > 0)
+                        {
+                            String posicao = pilha_temporaria.Pop();
+                            codigo_intermediario_final.Add(new Token(posicao + "\n", "final de funcao", 0, 0));
+                        }
+                        else
+                            codigo_intermediario_final.Add(codigo[i]);
                     }
+                    else
+                        codigo_intermediario_final.Add(new Token("\n.fim_programa", "fim programa", 0, 0));
                 }
                 else
                     codigo_intermediario_final.Add(codigo[i]);
