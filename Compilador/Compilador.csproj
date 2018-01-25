@@ -48,8 +48,10 @@
     <Compile Include="controles\AnaliseLexica.cs" />
     <Compile Include="controles\AnaliseSemantica.cs" />
     <Compile Include="controles\AnaliseSintatica.cs" />
+    <Compile Include="controles\FinalRaspberry.cs" />
     <Compile Include="controles\Estados.cs" />
     <Compile Include="controles\Intermediario.cs" />
+    <Compile Include="controles\IntermediarioRaspberry.cs" />
     <Compile Include="modelos\Erro.cs" />
     <Compile Include="modelos\Token.cs" />
     <Compile Include="visoes\JanelaPrincipal.cs">

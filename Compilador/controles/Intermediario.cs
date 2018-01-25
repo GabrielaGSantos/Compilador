@@ -12,7 +12,6 @@ namespace Compilador.controles
     {
         List<Token> tokens = new List<Token>();
         List<String> lista_variaveis = new List<String>();
-        List<String> lista_mensagens = new List<String>();
         List<String> acoes = new List<String>();
         List<Token> codigo = new List<Token>();
         List<Token> codigo_intermediario_final = new List<Token>();
@@ -26,7 +25,7 @@ namespace Compilador.controles
             this.lista_variaveis = lista_variaveis;
         }
 
-        public Tuple<List<String>, List<String>, List<String>, List<Token>> GerarCodigo()
+        public Tuple<List<String>, List<String>,  List<Token>> GerarCodigo()
         {
             for (int i = 0; i < tokens.Count; i++)
             {
@@ -60,25 +59,13 @@ namespace Compilador.controles
                     if (tokens[i].Tipo_token == "programa")
                         i++;
                     else if (tokens[i].Tipo_token == "tipo_variavel")
-                        i = i + 2;
-                    /* else if (tokens[i].Tipo_token == "escreva")
-                     {
-                         codigo.Add(tokens[i]);
-                         if(tokens[i+2].Tipo_token == "texto")
-                         {
-                             i = i + 2;
-                             lista_mensagens.Add("msg" + (++contador_mensagens) + ": .asciz " + tokens[i].Lexema);
-                             lista_mensagens.Add("len" + (contador_mensagens) + "= .-msg" + contador_mensagens);
-                             codigo.Add(new Token("msg" + (contador_mensagens), "texto", 0, 0));
-                             i++;
-                         }
-                     }*/
+                        i = i + 2;                   
                     else
                         codigo.Add(tokens[i]);
                 }
             }
             AnalisarRepeticoes();
-            return new Tuple<List<String>, List<String>, List<String>, List<Token>>(acoes, lista_variaveis, lista_mensagens, codigo_intermediario_final);
+            return new Tuple<List<String>, List<String>, List<Token>>(acoes, lista_variaveis, codigo_intermediario_final);
         }
 
         public void AnalisarExpressao(List<Token> expressao)
@@ -168,6 +155,7 @@ namespace Compilador.controles
                     operacao_temporaria.Add(new Token(";", "final_linha", 0, 0));
 
                     pilha_temporaria.Push(new Token("_x" + contador_variaveis, "variavel", 0, 0));
+                    acoes.Add("Criada variável _x" + contador_variaveis);
                 }
 
                 else
@@ -208,9 +196,10 @@ namespace Compilador.controles
             {
                 if (codigo[i].Tipo_token == "repetir")
                 {
-                    codigo_intermediario_final.Add(new Token(".faca_" + (++contador_faca) + "\n", "repetir", 0, 0));
+                    codigo_intermediario_final.Add(new Token("\nfaca_" + (++contador_faca) + ":\n", "repetir", 0, 0));
                     pilha_temporaria_faca.Push(contador_faca);
                     i++;
+                    acoes.Add("Convertido token repetir");
                 }
                 else if (codigo[i].Tipo_token == "ateh")
                 {
@@ -218,40 +207,43 @@ namespace Compilador.controles
                     int contador_temp = pilha_temporaria_faca.Pop();
                     if (codigo[i + 3].Tipo_token == "condicao_igual")
                     {
-                        codigo_intermediario_final.Add(new Token("\nCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_igual", 0, 0));
-                        codigo_intermediario_final.Add(new Token("JNE " + ".faca_" + contador_temp + "\n", "jump", 0, 0));
-                        codigo_intermediario_final.Add(new Token(".fim_faca_" + contador_temp + "\n\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\n\tCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_igual", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\tBNE " + "faca_" + contador_temp + ":\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token("fim_faca_" + contador_temp + "\n\n", "jump", 0, 0));
                     }
                     else
                     {
-                        codigo_intermediario_final.Add(new Token("\nCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_diferente", 0, 0));
-                        codigo_intermediario_final.Add(new Token("JEQ " + ".faca_" + contador_temp + "\n", "jump", 0, 0));
-                        codigo_intermediario_final.Add(new Token(".ate_" + contador_temp + "\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\n\tCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_diferente", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\tBEQ " + "faca_" + contador_temp + "\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token("ate_" + contador_temp + ":\n", "ateh", 0, 0));
                     }
                     i = i + 6;
+                    acoes.Add("Convertido token ateh");
                 }
                 else if (codigo[i].Tipo_token == "condicional_entrada")
                 {
                     if (codigo[i + 3].Tipo_token == "condicao_igual")
                     {
-                        codigo_intermediario_final.Add(new Token("\nCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_igual", 0, 0));
-                        codigo_intermediario_final.Add(new Token("JNE " + ".senao_" + (++contador_se) + "\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\n\tCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_igual", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\tBNE " + "senao_" + (++contador_se) + "\n", "jump", 0, 0));
                     }
                     else
                     {
-                        codigo_intermediario_final.Add(new Token("\nCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_diferente", 0, 0));
-                        codigo_intermediario_final.Add(new Token("JQE " + ".senao_" + (++contador_se) + "\n", "jump", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\n\tCMP " + codigo[i + 2].Lexema + "," + codigo[i + 4].Lexema + "\n", "condicao_diferente", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\tBQE " + "senao_" + (++contador_se) + "\n", "jump", 0, 0));
                     }
-                    codigo_intermediario_final.Add(new Token("\n.se_" + contador_se + "\n", "condicional_entrada", 0, 0));
+                    codigo_intermediario_final.Add(new Token("\nse_" + contador_se + ":\n", "condicional_entrada", 0, 0));
                     pilha_temporaria_se.Push(contador_se);
                     i = i + 6;
+                    acoes.Add("Convertido token condicao_entrada");
                 }
                 else if (codigo[i].Tipo_token == "condicional_saida")
                 {                                       
                     int contador_temp = pilha_temporaria_se.Pop();
                     pilha_temporaria.Push(".fim_senao_" + contador_temp);
-                    codigo_intermediario_final.Add(new Token("\n.senao_"+contador_temp + "\n", "condicional_saida", 0, 0));
+                    codigo_intermediario_final.Add(new Token("\nsenao_"+contador_temp + ":\n", "condicional_saida", 0, 0));
                     i++;
+                    acoes.Add("Convertido token condicao_saida");
                 }
                 else if (codigo[i].Tipo_token == "fim")
                 {
@@ -259,8 +251,8 @@ namespace Compilador.controles
                     {
                         if (codigo[i + 1].Tipo_token == "condicional_saida")
                         {
-                            codigo_intermediario_final.Add(new Token(".fim_se_" + contador_se, "fim condicional_entrada", 0, 0));
-                            codigo_intermediario_final.Add(new Token("\nJMP .fim_senao_" + contador_se + "\n", "jump", 0, 0));
+                            codigo_intermediario_final.Add(new Token("fim_se_" + contador_se, "fim_condicional_entrada", 0, 0));
+                            codigo_intermediario_final.Add(new Token("\n\tBAL fim_senao_" + contador_se + "\n", "jump", 0, 0));
                         }
                         else if (pilha_temporaria.Count > 0)
                         {
@@ -271,7 +263,8 @@ namespace Compilador.controles
                             codigo_intermediario_final.Add(codigo[i]);
                     }
                     else
-                        codigo_intermediario_final.Add(new Token("\n.fim_programa", "fim programa", 0, 0));
+                        codigo_intermediario_final.Add(new Token("\nfim_programa", "fim_programa", 0, 0));
+                    acoes.Add("Convertido token fim");
                 }
                 else
                     codigo_intermediario_final.Add(codigo[i]);

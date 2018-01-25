@@ -173,18 +173,41 @@ namespace Compilador
         private void CodigoIntermediario(List<String> lista_variaveis)
         {
             Intermediario codigo_intermediario = new Intermediario(lista_de_tokens, lista_variaveis);
-            Tuple<List<String>, List<String>, List<String>, List<Token>> tokens_erros = codigo_intermediario.GerarCodigo();
+            Tuple<List<String>, List<String>, List<Token>> intermediario = codigo_intermediario.GerarCodigo();
+                       
+            CodigoIntermediarioRaspberry(intermediario.Item2, intermediario.Item3, intermediario.Item1);
+        }
 
-            foreach (var codigo in tokens_erros.Item4)
+        private void CodigoIntermediarioRaspberry(List<String> lista_variaveis, List<Token> codigo_intermediario, List<String> acoes)
+        {
+            IntermediarioRaspberry codigo_intermediario_raspberry = new IntermediarioRaspberry(codigo_intermediario, acoes);
+            Tuple<List<Token>, List<String>, List<String>> raspberry = codigo_intermediario_raspberry.GerarCodigo();
+
+            foreach(var token in raspberry.Item1)
             {
-                if (codigo.Tipo_token == "final_linha" || codigo.Tipo_token == "inicio" || codigo.Tipo_token == "fim" || codigo.Tipo_token == "abrir_chave")
-                    caixa_console.AppendText(codigo.Lexema + "\n");
+                if (token.Tipo_token == "final_linha" || token.Tipo_token == "inicio" || token.Tipo_token == "fim" || token.Tipo_token == "abrir_chave")
+                    caixa_console.AppendText(token.Lexema + "\n");
                 else
-                    caixa_console.AppendText(codigo.Lexema+" ");
+                    caixa_console.AppendText(token.Lexema + " ");
+            }
+            CodigoFinal(raspberry.Item1, lista_variaveis, raspberry.Item3);
+        }
+
+        private void CodigoFinal(List<Token> codigo_intermediario, List<String> lista_variavel, List<String> lista_mensagens)
+        {
+            FinalRaspberry codigo_intermediario_raspberry = new FinalRaspberry(codigo_intermediario, lista_variavel, lista_mensagens);
+            Tuple<List<Token>, List<String>> raspberry = codigo_intermediario_raspberry.GerarCodigo();
+
+            foreach (var token in raspberry.Item1)
+            {
+                if (token.Tipo_token == "final_linha" || token.Tipo_token == "inicio" || token.Tipo_token == "fim" || token.Tipo_token == "abrir_chave")
+                    caixa_console.AppendText(token.Lexema + "\n");
+                else
+                    caixa_console.AppendText(token.Lexema + " ");
             }
         }
 
-        private void Log_CheckedChanged(object sender, EventArgs e)
+            private void Log_CheckedChanged(object sender, EventArgs e)
         {
 
         }
