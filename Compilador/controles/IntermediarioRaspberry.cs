@@ -36,7 +36,7 @@ namespace Compilador.controles
                         i = i + 2;
                         lista_mensagens.Add("\tmsg" + (++contador_mensagens) + ": .asciz " + codigo[i].Lexema);
                         lista_mensagens.Add("\tmsglen" + (contador_mensagens) + "= .-msg" + contador_mensagens);
-                        codigo_raspberry.Add(new Token("msg" + (contador_mensagens), "texto", 0, 0));
+                        codigo_raspberry.Add(new Token("msg" + (contador_mensagens), "texto", contador_mensagens, 0));
                         acoes.Add("Salva mensagem: " + codigo[i].Lexema);
                         i++;
                     }
@@ -62,7 +62,7 @@ namespace Compilador.controles
                         codigo_raspberry.Add(new Token("\n\tBGT divisao_"+contador_divisao, "assembly_divisao", 0, 0));
                         codigo_raspberry.Add(new Token("\n\tLDR r1, ="+variavel_atual, "assembly_divisao", 0, 0));
                         codigo_raspberry.Add(new Token("\n\tSTR r4, [r1]", "assembly_divisao", 0, 0));
-                        codigo_raspberry.Add(new Token("\nfim_divisao_"+contador_divisao+"\n\n", "assembly_divisao", 0, 0));
+                        codigo_raspberry.Add(new Token("\nfim_divisao_"+contador_divisao, "assembly_divisao", 0, 0));
                         i = i + 4;
                         acoes.Add("Convertido token divisao para algoritmo de divisao");
                     }

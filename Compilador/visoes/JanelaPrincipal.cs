@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -182,32 +183,39 @@ namespace Compilador
         {
             IntermediarioRaspberry codigo_intermediario_raspberry = new IntermediarioRaspberry(codigo_intermediario, acoes);
             Tuple<List<Token>, List<String>, List<String>> raspberry = codigo_intermediario_raspberry.GerarCodigo();
-
-            foreach(var token in raspberry.Item1)
-            {
-                if (token.Tipo_token == "final_linha" || token.Tipo_token == "inicio" || token.Tipo_token == "fim" || token.Tipo_token == "abrir_chave")
-                    caixa_console.AppendText(token.Lexema + "\n");
-                else
-                    caixa_console.AppendText(token.Lexema + " ");
-            }
+            
             CodigoFinal(raspberry.Item1, lista_variaveis, raspberry.Item3);
         }
 
         private void CodigoFinal(List<Token> codigo_intermediario, List<String> lista_variavel, List<String> lista_mensagens)
         {
             FinalRaspberry codigo_intermediario_raspberry = new FinalRaspberry(codigo_intermediario, lista_variavel, lista_mensagens);
-            Tuple<List<Token>, List<String>> raspberry = codigo_intermediario_raspberry.GerarCodigo();
+            Tuple<List<String>, List<String>> raspberry = codigo_intermediario_raspberry.GerarCodigo();
 
             foreach (var token in raspberry.Item1)
+                    caixa_console.AppendText(token + " ");
+
+            String textoFinal = "";
+
+            foreach (var token in raspberry.Item1)
+                textoFinal += token + " ";
+
+                WriteTextAsync(textoFinal);
+        }
+
+        static async void WriteTextAsync(string text)
+        {
+            // Set a variable to the My Documents path.
+            string mydocpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            // Write the text asynchronously to a new file named "WriteTextAsync.txt".
+            using (StreamWriter outputFile = new StreamWriter(mydocpath + @"\saida.s"))
             {
-                if (token.Tipo_token == "final_linha" || token.Tipo_token == "inicio" || token.Tipo_token == "fim" || token.Tipo_token == "abrir_chave")
-                    caixa_console.AppendText(token.Lexema + "\n");
-                else
-                    caixa_console.AppendText(token.Lexema + " ");
+                await outputFile.WriteAsync(text);
             }
         }
 
-            private void Log_CheckedChanged(object sender, EventArgs e)
+        private void Log_CheckedChanged(object sender, EventArgs e)
         {
 
         }
