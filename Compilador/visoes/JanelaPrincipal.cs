@@ -181,20 +181,30 @@ namespace Compilador
 
         private void CodigoIntermediarioRaspberry(List<String> lista_variaveis, List<Token> codigo_intermediario, List<String> acoes)
         {
-            IntermediarioRaspberry codigo_intermediario_raspberry = new IntermediarioRaspberry(codigo_intermediario, acoes);
+            IntermediarioRaspberry codigo_intermediario_raspberry = new IntermediarioRaspberry(codigo_intermediario, acoes, lista_variaveis);
             Tuple<List<Token>, List<String>, List<String>> raspberry = codigo_intermediario_raspberry.GerarCodigo();
-            
-            CodigoFinal(raspberry.Item1, lista_variaveis, raspberry.Item3);
+
+            CodigoFinal(raspberry.Item1, lista_variaveis, raspberry.Item3, raspberry.Item2);
         }
 
-        private void CodigoFinal(List<Token> codigo_intermediario, List<String> lista_variavel, List<String> lista_mensagens)
+        private void CodigoFinal(List<Token> codigo_intermediario, List<String> lista_variavel, List<String> lista_mensagens, List<String> acoes)
         {
-            FinalRaspberry codigo_intermediario_raspberry = new FinalRaspberry(codigo_intermediario, lista_variavel, lista_mensagens);
+            FinalRaspberry codigo_intermediario_raspberry = new FinalRaspberry(codigo_intermediario, lista_variavel, lista_mensagens, acoes);
             Tuple<List<String>, List<String>> raspberry = codigo_intermediario_raspberry.GerarCodigo();
+
+            if (LogFinal.Checked && raspberry.Item2 != null)
+            {
+                caixa_console.AppendText("\nSequencia de Ações: ");
+                foreach (var producao in raspberry.Item2)
+                {
+                    caixa_console.AppendText("\n" + producao);
+                }
+                caixa_console.AppendText("\n\n");
+            }
 
             foreach (var token in raspberry.Item1)
                     caixa_console.AppendText(token + " ");
-
+            
             String textoFinal = "";
 
             foreach (var token in raspberry.Item1)
